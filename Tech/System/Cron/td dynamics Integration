@@ -1,0 +1,105 @@
+
+<?php
+
+$userData = "grant_type=client_credentials&client_id=45d3fcbf-8368-4123-b938-0a143df1faa1&client_secret=wHu8Q~KUcFxCmSVUsUqUm77Ozb32pwXoUmlaIaqO&resource=https://td-dev40f46a5c4290ffb3devaos.cloudax.dynamics.com";
+
+
+/*'{"grant_type: client_credentials", "client_id: 6358f49a-16c8-4aed-bc40-2df9dbf66e7f", "client_secret: p-o9lBk~kAt7Mk5-noT4..c1D-B0539bhP", --data-urlencode "resource: https://td-dev40f46a5c4290ffb3devaos.cloudax.dynamics.com", "tenant_id: 473a0bc4-3b24-41dd-8637-31d1d34ae468"}';*/
+$urlApi = "https://login.microsoftonline.com/473a0bc4-3b24-41dd-8637-31d1d34ae468/oauth2/token";
+$curl = curl_init($urlApi);
+curl_setopt($curl, CURLOPT_URL, $urlApi);
+curl_setopt($curl, CURLOPT_POST, true);
+//curl_setopt($ch,CURLOPT_FOLLOWLOCATION,true);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+$headers= array('Content-Type: application/x-www-form-urlencoded');
+curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($curl, CURLOPT_POSTFIELDS, $userData);
+$token = curl_exec($curl);
+curl_close($curl);
+//var_dump($token);
+
+$try = json_decode($token);
+$olasco = $try->access_token;
+//var_dump($try->access_token);
+
+
+
+$body = array("_contract" =>
+         array("Warehouse" => "MW"
+            
+         )
+);
+
+$postData = json_encode($body);
+
+/*$url = "https://td-dev40f46a5c4290ffb3devaos.cloudax.dynamics.com/api/services/DynMagnetoServiceGroup/DynMagnetoItemOnHandList/getItemListV2";*/
+
+$url = "https://td-dev40f46a5c4290ffb3devaos.cloudax.dynamics.com/api/services/SalesPriceSeviceGroup/SalesPrice/getItemOnhandList";
+$curl = curl_init($url);
+
+curl_setopt($curl, CURLOPT_URL, $url);
+curl_setopt($curl, CURLOPT_POST, true);
+
+var_dump($olasco);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+$headers = array(
+   "Accept: application/json",
+   "Authorization: Bearer $olasco"
+);
+curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+//for debug only!
+curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+
+$resp = curl_exec($curl);
+
+
+$off = json_decode($resp);
+
+/*var_dump($off);
+die();*/
+
+
+//$ten = json_encode(json_decode($off->ItemList));
+$ten = json_decode(json_encode($off));
+/*var_dump($ten);
+die();*/
+
+//$lucky = (json_decode($ten));
+//var_dump($lucky);
+
+
+foreach($off as $value) {
+var_dump($value->itemId, $value->OnHandQuantity, $value->Salesprice);
+
+
+
+
+
+}
+
+//$reality = json_decode($off);
+//var_dump($reality);
+
+
+$tie =json_decode($resp);
+//var_dump($tie);
+//var_dump($tie->{'value'});
+$ola = json_encode($tie->{'value'});
+$te = json_decode($ola);
+//var_dump($te);
+//$te = json_decode(json_encode($tie->{'value'}));
+
+//var_dump($te);
+//echo $te;
+
+foreach ($te as $t) {
+   echo $t->SearchName;
+}
+ 
+
+
+
+
